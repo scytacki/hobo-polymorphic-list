@@ -1,0 +1,6 @@
+Regarding polymorphic comments in hobo this gist helps some:
+https://gist.github.com/498837
+
+The new route for the polymorphic model doesn't work correctly because the field-list tag can't handle the polymorphic
+belongs_to
+
