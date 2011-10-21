@@ -7,6 +7,10 @@ class Page < ActiveRecord::Base
     timestamps
   end
 
+  has_many :page_elements, :accessible => true
+  
+  children :page_elements
+
   # --- Permissions --- #
 
   def create_permitted?

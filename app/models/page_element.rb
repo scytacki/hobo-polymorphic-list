@@ -3,8 +3,11 @@ class PageElement < ActiveRecord::Base
   hobo_model # Don't put anything above this
 
   fields do
+    name :string
     timestamps
   end
+
+  belongs_to :page
 
   # --- Permissions --- #
 
