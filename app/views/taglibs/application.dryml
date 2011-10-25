@@ -17,9 +17,12 @@
 <extend tag="form" for="Page">
   <old-form merge>
     <after-field-list:>
-      <collection:page_elements/>
-      <a action="new" to="&this.text_elements" param="new-link">
+      <sortable-collection:page_elements/>
+      <a action="new" to="&this.text_elements">
         <ht key="text_element.actions.new" >New Text element</ht>
+      </a>
+      <a action="new" to="&this.image_elements">
+        <ht key="image_element.actions.new" >New Image element</ht>
       </a>
     </after-field-list:>
   </old-form>

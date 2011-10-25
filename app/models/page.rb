@@ -7,10 +7,11 @@ class Page < ActiveRecord::Base
     timestamps
   end
 
-  has_many :page_elements
+  has_many :page_elements, :order => :position
   has_many :comments, :as => :commentable, :accessible => true
   
   has_many :text_elements, :through => :page_elements, :source => :insertable, :source_type => 'TextElement'
+  has_many :image_elements, :through => :page_elements, :source => :insertable, :source_type => 'ImageElement'
   
   children :page_elements
 
@@ -20,7 +21,9 @@ class Page < ActiveRecord::Base
     def reverse_reflection(association)
       case association.to_sym
       when :text_elements
-        PageElement.reflections[:page]
+        TextElement.reflections[:page]
+      when :image_elements
+        ImageElement.reflections[:page]
       else
         self.orig_reverse_reflection(association)
       end

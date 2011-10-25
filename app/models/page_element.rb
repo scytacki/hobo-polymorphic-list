@@ -10,6 +10,8 @@ class PageElement < ActiveRecord::Base
   belongs_to :page
   belongs_to :insertable, :polymorphic => true
 
+  acts_as_list :scope => :page
+
   # --- Permissions --- #
 
   def create_permitted?

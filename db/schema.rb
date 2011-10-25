@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111021220217) do
+ActiveRecord::Schema.define(:version => 20111025031756) do
 
   create_table "comments", :force => true do |t|
     t.string   "name"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(:version => 20111021220217) do
     t.string   "name"
     t.integer  "insertable_id"
     t.string   "insertable_type"
+    t.integer  "position"
   end
 
   add_index "page_elements", ["insertable_type", "insertable_id"], :name => "index_page_elements_on_insertable_type_and_insertable_id"

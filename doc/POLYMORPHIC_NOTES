@@ -29,7 +29,7 @@ the input-many tag is used
       def reverse_reflection(association)
         case association.to_sym
         when :text_elements
-          PageElement.reflections[:page]
+          TextElement.reflections[:page]
         else
           self.orig_reverse_reflection(association)
         end
@@ -83,6 +83,16 @@ the input-many tag is used
         </after-field-list:>
       </old-form>
     </extend>
+- add the collection to the edit form for the page:
+
+For sorting
+- add to the join model:
+    acts_as_list :scope => :page
+- add to the Gemfile
+    gem "acts_as_list"
+- change the 'collection' in the form above to 'sortable-collection'
+- the page view will be a sortable-collection by default so you might want to change that
+
 
 
 NOTES:
@@ -93,6 +103,4 @@ be setup something like:
     polymorphic_auto_actions_for :page, 'Page#text_elements'
 - I also made a change to reverse_reflection so it would handle 'has_one', but I think the overriding of
 that method should take care of that bug
-- more simple than the class method, would be just to put the controller code in a module since it would
-be the same for all modules.
 
