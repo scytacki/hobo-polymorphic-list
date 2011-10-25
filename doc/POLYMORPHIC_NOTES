@@ -4,3 +4,95 @@ https://gist.github.com/498837
 The new route for the polymorphic model doesn't work correctly because the field-list tag can't handle the polymorphic
 belongs_to
 
+hobo has the <input-many> tag that adds the (+)(-) buttons to edit a has-many efficiently on the form
+this is dynamically created by the field-list in the form because it renders the
+input tag for each field
+and the input tag is defined to check the context and the reflection of the current field
+And if it is has_many without a through option
+the input-many tag is used
+
+
+- make the join model as a resource so it can be ordered
+- the 'parent' of the collection should have a associations like
+    has_many :page_elements
+    has_many :text_elements, :through => :page_elements, :source => :insertable, :source_type => 'TextElement'
+- the join model should have associations like
+    belongs_to :page
+    belongs_to :insertable, :polymorphic => true
+- the 'children' of the collection should have associations like
+    has_one :page_element, :as => :insertable
+    has_one :page, :through => :page_element
+- to make the automagic hobo code work the following needs to be added to the 'parent'
+    class << self
+      alias :orig_reverse_reflection :reverse_reflection
+  
+      def reverse_reflection(association)
+        case association.to_sym
+        when :text_elements
+          PageElement.reflections[:page]
+        else
+          self.orig_reverse_reflection(association)
+        end
+      end
+    end
+- and this needs to be added to the 'child'
+    class << self
+      alias :orig_reverse_reflection :reverse_reflection
+  
+      def reverse_reflection(association)
+        case association.to_sym
+        when :page
+          Page.reflections[:text_elements]
+        else
+          self.orig_reverse_reflection(association)
+        end
+      end
+    end
+- 'child' controller needs the following.  This causes routes and views to be generated
+    auto_actions_for :page, [ :index, :new, :create ]
+- 'child' controller also needs, to fix the broken polymorphic new method
+    def new_for_page
+      id = params["page_id"]
+      owner = Page.find(id)
+      new_text_element = owner.text_elements.new
+      new_text_element.page = owner
+      hobo_new_for :page, new_text_element
+    end
+    
+    def create_for_page
+      id = params["page_id"]
+      owner = Page.find(id)
+      attributes = attribute_parameters
+      attributes[:page] = owner
+      hobo_create_for :page, :attributes => attributes
+    end
+- then so the cards are displayed correctly for the 'parent' add the following
+    <def tag="card" for="PageElement">
+      <!-- By default a recursive tag inside a polymorphic definition just calls the base card 
+           So we have to explicitly set the type-->
+      <card:insertable for-type="&this.insertable.class"/>
+    </def>
+- and then so new children can be added on the edit page of the parent
+    <extend tag="form" for="Page">
+      <old-form merge>
+        <after-field-list:>
+          <collection:page_elements/>
+          <a action="new" to="&this.text_elements" param="new-link">
+            <ht key="text_element.actions.new" >New Text element</ht>
+          </a>
+        </after-field-list:>
+      </old-form>
+    </extend>
+
+
+NOTES:
+- the reverse_reflection stuff can be refactored into class method defined by hobo_model, so they could
+be setup something like:
+    inverse :page, 'Page#text_elements'
+- the child controller stuff could also be a class method something like:
+    polymorphic_auto_actions_for :page, 'Page#text_elements'
+- I also made a change to reverse_reflection so it would handle 'has_one', but I think the overriding of
+that method should take care of that bug
+- more simple than the class method, would be just to put the controller code in a module since it would
+be the same for all modules.
+

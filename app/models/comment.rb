@@ -1,13 +1,13 @@
-class ImageElement < ActiveRecord::Base
+class Comment < ActiveRecord::Base
 
   hobo_model # Don't put anything above this
 
   fields do
-    url :string
+    name :string
     timestamps
   end
 
-  has_one :page_element, :as => :insertable
+  belongs_to :commentable, :polymorphic => true
 
   # --- Permissions --- #
 

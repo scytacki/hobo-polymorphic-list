@@ -8,6 +8,7 @@ class PageElement < ActiveRecord::Base
   end
 
   belongs_to :page
+  belongs_to :insertable, :polymorphic => true
 
   # --- Permissions --- #
 

@@ -7,6 +7,23 @@ class TextElement < ActiveRecord::Base
     timestamps
   end
 
+  has_one :page_element, :as => :insertable
+  has_one :page, :through => :page_element
+  
+  class << self
+    alias :orig_reverse_reflection :reverse_reflection
+    
+    def reverse_reflection(association)
+      case association.to_sym
+      when :page
+        Page.reflections[:text_elements]
+      else
+        self.orig_reverse_reflection(association)
+      end
+    end
+  end
+  
+
   # --- Permissions --- #
 
   def create_permitted?
