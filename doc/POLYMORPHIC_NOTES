@@ -1,17 +1,4 @@
-Regarding polymorphic comments in hobo this gist helps some:
-https://gist.github.com/498837
-
-The new route for the polymorphic model doesn't work correctly because the field-list tag can't handle the polymorphic
-belongs_to
-
-hobo has the <input-many> tag that adds the (+)(-) buttons to edit a has-many efficiently on the form
-this is dynamically created by the field-list in the form because it renders the
-input tag for each field
-and the input tag is defined to check the context and the reflection of the current field
-And if it is has_many without a through option
-the input-many tag is used
-
-
+STEPS
 - make the join model as a resource so it can be ordered
 - the 'parent' of the collection should have a associations like
     has_many :page_elements
@@ -103,4 +90,19 @@ be setup something like:
     polymorphic_auto_actions_for :page, 'Page#text_elements'
 - I also made a change to reverse_reflection so it would handle 'has_one', but I think the overriding of
 that method should take care of that bug
+
+Regarding polymorphic comments in hobo this gist helps some:
+https://gist.github.com/498837
+
+The new route for the polymorphic model doesn't work correctly because the field-list tag can't handle the polymorphic
+belongs_to
+
+hobo has the <input-many> tag that adds the (+)(-) buttons to edit a has-many efficiently on the form
+this is dynamically created by the field-list in the form because it renders the
+input tag for each field
+and the input tag is defined to check the context and the reflection of the current field
+And if it is has_many without a through option
+the input-many tag is used
+
+
 
